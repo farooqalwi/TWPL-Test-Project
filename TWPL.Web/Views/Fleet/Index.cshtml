@@ -1,0 +1,405 @@
+﻿@model List<TWPL.Common.Model.Entities.Vehicle>
+
+@{
+    ViewData["Title"] = "Fleet";
+}
+
+<div>
+    <button class="badge bg-primary btn-add" data-bs-toggle="modal" data-bs-target="#addVehicle">Add Vehicle</button>
+    <button class="badge bg-success btn-export" onclick="exportVehiclesData()">Export</button>
+    <button class="badge bg-warning btn-import" onclick="importVehiclesData()">Import</button>
+    <hr />
+</div>
+
+<!-- Add Vehicle Modal -->
+<div class="modal fade" id="addVehicle" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addVehicleModalLabel">Add Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="addVehicleRegNo">Reg No:</label>
+                    <input type="text" class="form-control" id="addVehicleRegNo" name="RegNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleMake">Make:</label>
+                    <input type="text" class="form-control" id="addVehicleMake" name="Make" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleModel">Model:</label>
+                    <input type="text" class="form-control" id="addVehicleModel" name="Model" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleColor">Color:</label>
+                    <input type="text" class="form-control" id="addVehicleColor" name="Color" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleEngineNo">Engine No:</label>
+                    <input type="text" class="form-control" id="addVehicleEngineNo" name="EngineNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleChassisNo">Chassis No:</label>
+                    <input type="text" class="form-control" id="addVehicleChassisNo" name="ChassisNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleDateOfPurchase">Date Of Purchase:</label>
+                    <input type="date" class="form-control" id="addVehicleDateOfPurchase" name="DateOfPurchase" />
+                </div>
+
+                <div class="form-group">
+                    <label for="addVehicleActive">Active:</label>
+                    <select class="form-control" id="addVehicleActive" name="Active">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addVehicle()">Add Vehicle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-hover" id="datatable">
+        <thead>
+            <tr>
+                <th>Vehicle ID</th>
+                <th>Reg No</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Engine No</th>
+                <th>Chassis No</th>
+                <th>Date Of Purchase</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.VehicleID</td>
+                    <td>@item.RegNo</td>
+                    <td>@item.Make</td>
+                    <td>@item.Model</td>
+                    <td>@item.Color</td>
+                    <td>@item.EngineNo</td>
+                    <td>@item.ChassisNo</td>
+                    <td>@item.DateOfPurchase.ToShortDateString()</td>
+                    <td>@(item.Active ? "Yes" : "No")</td>
+                    <td>
+                        <button class="badge bg-info text-dark btn-edit" data-vehicle-id="@item.VehicleID" data-bs-toggle="modal" data-bs-target="#editForm">Edit</button>
+                        <button class="badge bg-danger btn-delete" data-vehicle-id="@item.VehicleID">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center text-danger">
+        <h1 class="display-4">No vehicle data found to display</h1>
+    </div>
+}
+
+<!-- Edit Vehicle Modal -->
+<div class="modal fade" id="editForm" tabindex="-1" aria-labelledby="editFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFormModalLabel">Edit Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editVehicleId" name="VehicleID" />
+
+                <div class="form-group">
+                    <label for="editRegNo">Reg No:</label>
+                    <input type="text" class="form-control" id="editRegNo" name="RegNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editMake">Make:</label>
+                    <input type="text" class="form-control" id="editMake" name="Make" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editModel">Model:</label>
+                    <input type="text" class="form-control" id="editModel" name="Model" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editColor">Color:</label>
+                    <input type="text" class="form-control" id="editColor" name="Color" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editEngineNo">Engine No:</label>
+                    <input type="text" class="form-control" id="editEngineNo" name="EngineNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editChassisNo">Chassis No:</label>
+                    <input type="text" class="form-control" id="editChassisNo" name="ChassisNo" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editDateOfPurchase">Date Of Purchase:</label>
+                    <input type="text" class="form-control" id="editDateOfPurchase" name="DateOfPurchase" />
+                </div>
+
+                <div class="form-group">
+                    <label for="editActive">Active:</label>
+                    <select class="form-control" id="editActive" name="Active">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editVehicle()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var vehicles = @Html.Raw(Json.Serialize(Model));
+
+    $(document).ready(function () {
+
+        $('#datatable').DataTable();
+
+        $('#editDateOfPurchase').datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $('#datatable').on('click', '.btn-delete', function () {
+            var vehicleId = $(this).data('vehicle-id');
+
+            $.ajax({
+                url: '@Url.Action("DeleteVehicle", "Fleet")',
+                type: 'POST',
+                data: { vehicleId: vehicleId },
+                success: function (response) {
+                    if (response.success) {
+                        // Reload the table or update the UI as needed
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error: Unable to delete the vehicle.');
+                }
+            });
+        });
+
+        $('#datatable').on('click', '.btn-edit', function () {
+            var vehicleId = $(this).data('vehicle-id');
+            var vehicle = findVehicleById(vehicleId);
+            if (vehicle) {
+                $('#editVehicleId').val(vehicle.vehicleID);
+                $('#editRegNo').val(vehicle.regNo);
+                $('#editMake').val(vehicle.make);
+                $('#editModel').val(vehicle.model);
+                $('#editColor').val(vehicle.color);
+                $('#editEngineNo').val(vehicle.engineNo);
+                $('#editChassisNo').val(vehicle.chassisNo);
+                $('#editDateOfPurchase').datepicker('setDate', new Date(vehicle.dateOfPurchase));
+                $('#editActive').val(vehicle.active ? '1' : '0');
+
+            }
+        });
+
+        function findVehicleById(vehicleId) {
+            return vehicles.find(function (vehicle) {
+                return vehicle.vehicleID == vehicleId;
+            });
+        }
+    });
+
+    function editVehicle() {
+        var editedVehicle = {
+            VehicleID: $('#editVehicleId').val(),
+            RegNo: $('#editRegNo').val(),
+            Make: $('#editMake').val(),
+            Model: $('#editModel').val(),
+            Color: $('#editColor').val(),
+            EngineNo: $('#editEngineNo').val(),
+            ChassisNo: $('#editChassisNo').val(),
+            DateOfPurchase: $('#editDateOfPurchase').val(),
+            Active: $('#editActive').val() === '1'
+        };
+
+        // Send an AJAX request to update the record in the database
+        $.ajax({
+            url: '/Fleet/UpdateVehicle', // Replace with your actual controller and action
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(editedVehicle),
+            success: function (response) {
+                if (response.success) {
+                    // Reload the table or update the UI as needed
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('Error: Unable to update the vehicle.');
+            }
+        });
+    }
+
+    function addVehicle() {
+        var newVehicle = {
+            RegNo: $('#addVehicleRegNo').val(),
+            Make: $('#addVehicleMake').val(),
+            Model: $('#addVehicleModel').val(),
+            Color: $('#addVehicleColor').val(),
+            EngineNo: $('#addVehicleEngineNo').val(),
+            ChassisNo: $('#addVehicleChassisNo').val(),
+            DateOfPurchase: $('#addVehicleDateOfPurchase').val(),
+            Active: $('#addVehicleActive').val() === '1'
+        };
+
+        $.ajax({
+            url: '/Fleet/AddVehicle',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(newVehicle),
+            success: function (response) {
+                if (response.success) {
+                    // Reload the table or update the UI as needed
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('Error: Unable to add the new vehicle.');
+            }
+        });
+    }
+
+    function exportVehiclesData() {
+        // Make an AJAX request to the server endpoint
+        $.ajax({
+            url: '/Fleet/ExportVehiclesDataToExcel',
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob' // Important for handling binary data
+            },
+            success: function (data, textStatus, jqXHR) {
+                var blob = new Blob([data], { type: jqXHR.getResponseHeader('content-type') });
+                saveAs(blob, 'VehiclesExport.xlsx');
+                alert('Data exported successfully.');
+            },
+            error: function () {
+                alert('Error: Unable to export data.');
+            }
+        });
+    }
+
+    function importVehiclesData() {
+        // Create an input element of type file
+        var input = document.createElement('input');
+        input.type = 'file';
+
+        // Set the accept attribute to allow only Excel files
+        input.accept = '.xlsx, .xls';
+
+        // Set the onchange event to handle the file selection
+        input.onchange = function (event) {
+            // Get the selected file
+            var file = event.target.files[0];
+
+            // Check if a file is selected
+            if (file) {
+                // Use FileReader to read the file
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // Parse the Excel file using SheetJS
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: 'array' });
+
+                    // Get the first sheet
+                    var sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                    // Specify the range to skip the first row (header)
+                    var range = XLSX.utils.decode_range(sheet['!ref']);
+                    range.s.r = 1; // Start from the second row
+
+                    // Convert sheet data to JSON, skipping the first row
+                    var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, range: range });
+
+                    // Process the imported data and create a list of Vehicle objects
+                    var vehiclesList = jsonData.map(function (row) {
+                        return {
+                            RegNo: row[1], // Assuming the order of columns in your Excel file
+                            Make: row[2],
+                            Model: row[3],
+                            Color: row[4],
+                            EngineNo: row[5],
+                            ChassisNo: row[6],
+                            DateOfPurchase: row[7], // Assuming the date is in the correct format
+                            Active: row[8] === 'Yes' // Convert 'Yes'/'No' to boolean
+                        };
+                    });
+
+                    $.ajax({
+                        url: '/Fleet/AddVehicles',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(vehiclesList),
+                        success: function (response) {
+                            if (response.success) {
+                                // Reload the table or update the UI as needed
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Error: Unable to add the new vehicle.');
+                        }
+                    });
+                };
+
+                // Read the file as an array buffer
+                reader.readAsArrayBuffer(file);
+            }
+        };
+
+        // Trigger a click on the input element to open the file dialog
+        input.click();
+    }
+
+</script>
+
+<div class="text-center text-danger">
+    <h1 class="display-4">@ViewData["ErrorMessage"]</h1>
+</div>
+
